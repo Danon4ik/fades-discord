@@ -19,4 +19,4 @@
 - `sbox_commits_channel_id` -> ID канала дискорда для отправки коммитов по S&box.
 
 # Присоединяйтесь к нам!
-Присоединяйтесь к нашему сообществу на Discord сервере [Fades](https://discord.com/invite/XFpr9uav)!
+Присоединяйтесь к нашему сообществу на Discord сервере [Fades](https://discord.gg/ETrKUWmCN4)!
