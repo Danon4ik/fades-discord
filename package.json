@@ -1,0 +1,15 @@
+{
+  "name": "fades-discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Danon",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.4.1",
+    "node-fetch": "^2.6.1"
+  }
+}
