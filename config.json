@@ -1,8 +1,0 @@
-{
-    "prefix": "!",
-    "token": "your-bot-token",
-    
-    "members_channel_id": "",
-    "novices_channel_id": "",
-    "sbox_commits_channel_id": ""    
-}
