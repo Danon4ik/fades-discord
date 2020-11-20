@@ -7,9 +7,7 @@
 - `!notify` -> Команда для выдачи ролей для уведомлений. 
 
 # Установка
-Установите [node.js](https://nodejs.org/en/download/).
-
-Или воспользуйтесь [Node Version Manager](https://github.com/nvm-sh/nvm) для установки.
+Установите [node.js](https://nodejs.org/en/download/) или воспользуйтесь [Node Version Manager](https://github.com/nvm-sh/nvm).
 
 Запустите команду `npm install` в папке с ботом и убедитесь, что она сработала.
 
