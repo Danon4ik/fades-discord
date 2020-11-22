@@ -28,40 +28,38 @@ bot.on('ready', () => {
 	console.log(`Бот запущен как ${bot.user.tag}`);
 
 	setInterval(() => {
-		try {
-			let commits_msg = require('./commits_msg.json');
+		let commits_msg = require('./commits_msg.json');
 
-			fetch('https://commits.facepunch.com/r/sbox?format=json').then((response) => {
-				return response.json();
-			}).then((data) => {
-				const commits_channel = bot.channels.cache.get(sbox_commits_channel_id);
-				if (!commits_channel) return;
+		fetch('https://commits.facepunch.com/r/sbox?format=json').then((response) => {
+			return response.json();
+		}).then((data) => {
+			const commits_channel = bot.channels.cache.get(sbox_commits_channel_id);
+			if (!commits_channel) return;
 
-				const commits_data = data.results;
-				for (let i = commits_data.length - 1; i >= 0; i--) {
-					const commit = commits_data[i];
-					if (commits_msg.sbox_commits.includes(commit.id)) continue;
+			const commits_data = data.results;
+			for (let i = commits_data.length - 1; i >= 0; i--) {
+				const commit = commits_data[i];
+				if (commits_msg.sbox_commits.includes(commit.id)) continue;
 
-					const embed = new Discord.MessageEmbed()
-						.setColor('#85107f')
-						.setTitle(`${commit.repo}/${commit.branch}#${commit.changeset}`)
-						.setAuthor(`${commit.user.name}`, `${commit.user.avatar}`)
-						.setURL(`https://commits.facepunch.com/${commit.id}`)
-						.setDescription(`\`\`\`${commit.message}\`\`\``)
-						.setTimestamp();
+				const embed = new Discord.MessageEmbed()
+					.setColor('#85107f')
+					.setTitle(`${commit.repo}/${commit.branch}#${commit.changeset}`)
+					.setAuthor(`${commit.user.name}`, `${commit.user.avatar}`)
+					.setURL(`https://commits.facepunch.com/${commit.id}`)
+					.setDescription(`\`\`\`${commit.message}\`\`\``)
+					.setTimestamp();
 
-					commits_channel.send({embed});
-					commits_msg.sbox_commits.push(commit.id);
-				}
+				commits_channel.send({embed});
+				commits_msg.sbox_commits.push(commit.id);
+			}
 
-				fs.writeFile("./commits_msg.json", JSON.stringify(commits_msg), (err) => {
-					if (err) console.log(err);
-				});
+			fs.writeFile("./commits_msg.json", JSON.stringify(commits_msg), (err) => {
+				if (err) console.log(err);
 			});
-		} catch (error) {
+		}).catch(error => {
 			console.error(error);
-		}
-	}, 20000);
+		});
+	}, 30000);
 });
 
 bot.on('message', async message => {
