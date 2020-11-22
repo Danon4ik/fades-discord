@@ -30,9 +30,12 @@ bot.on('ready', () => {
 	setInterval(() => {
 		let commits_msg = require('./commits_msg.json');
 
-		fetch('https://commits.facepunch.com/r/sbox?format=json').then((response) => {
-			return response.json();
-		}).then((data) => {
+		fetch('https://commits.facepunch.com/r/sbox?format=json').then(res => {
+			if (!res.ok) throw Error(res.statusText);
+			return res;
+		}).then(res => {
+			return res.json();
+		}).then(data => {
 			const commits_channel = bot.channels.cache.get(sbox_commits_channel_id);
 			if (!commits_channel) return;
 
