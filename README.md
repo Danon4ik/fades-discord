@@ -13,7 +13,7 @@
 
 Настройте `config.json` и `reactions` в `notify.json`.
 
-Запустите команду `npm start` или `node app.js` для проверки бота!
+Запустите команду `npm run start` или `node app.js` для проверки бота!
 
 # Немного о конфиге
 - `members_channel_id` -> ID канала дискорда для счётчика людей на сервере.
