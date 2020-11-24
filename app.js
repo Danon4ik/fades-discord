@@ -24,7 +24,7 @@ for (const file of commandFiles) {
 }
 
 bot.on('ready', () => {
-	bot.user.setPresence({ activity: { name: 'fades.pw - прилёг', type: 'WATCHING' }, status: 'online' });
+	bot.user.setPresence({ activity: { name: 'fades.pw', type: 'WATCHING' }, status: 'online' });
 	console.log(`Бот запущен как ${bot.user.tag}`);
 
 	setInterval(() => {
