@@ -3,13 +3,15 @@
   "version": "1.0.2",
   "description": "A simple bot for discord made using DiscordJS",
   "main": "app.js",
-  "scripts": {
-    "start": "node app.js"
-  },
   "author": "Danon",
+  "homepage": "https://github.com/danon4ik/fades-discord",
+  "repository": "github:danon4ik/fades-discord",
   "license": "MIT",
   "dependencies": {
     "discord.js": "^12.4.1",
     "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "start": "node app.js"
   }
 }
