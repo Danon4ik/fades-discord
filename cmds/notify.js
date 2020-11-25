@@ -5,8 +5,11 @@ module.exports = {
 	name: 'notify',
 	description: 'Команда для выдачи ролей для уведомлений.',
 	execute(message) {
-        const permissions = message.channel.permissionsFor(message.client.user);
-        if (!permissions.has("ADMINISTRATOR")) return;
+        const member = message.guild.members.cache.get(message.author.id);
+        if (!member.hasPermission(['ADMINISTRATOR'])) {
+            message.reply('У вас нет прав на использование этой команды.')
+            return;
+        }
 
         message.delete();
 
