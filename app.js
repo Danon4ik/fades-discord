@@ -1,21 +1,13 @@
-const { prefix, token, members_channel_id, novices_channel_id, sbox_commits_channel_id } = require('./config.json');
+const config = require('./config.json');
 
 const fs = require('fs');
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 const Discord = require('discord.js');
 
 const bot = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
-bot.commands = new Discord.Collection();
 
-let phrases_join = [
-	'наконец-то присоединился к нам!', 
-	'зашел попить чаю со всеми нами!', 
-	'прокрался к нам на сервер...', 
-	'новенький в нашей стае!', 
-	'внезапно появился на сервере.', 
-	'телепортировался к нам на сервер.', 
-	'вошёл в прекрасные владения нашего сервера!'
-];
+bot.commands = new Discord.Collection();
+bot.prefix = config.prefix;
 
 const commandFiles = fs.readdirSync('./cmds').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -36,7 +28,7 @@ bot.on('ready', () => {
 		}).then(res => {
 			return res.json();
 		}).then(data => {
-			const commits_channel = bot.channels.cache.get(sbox_commits_channel_id);
+			const commits_channel = bot.channels.cache.get(config.sbox_commits_channel_id);
 			if (!commits_channel) return;
 
 			const commits_data = data.results;
@@ -56,7 +48,7 @@ bot.on('ready', () => {
 				commits_msg.sbox_commits.push(commit.id);
 			}
 
-			fs.writeFile("./commits_msg.json", JSON.stringify(commits_msg), (err) => {
+			fs.writeFile('./commits_msg.json', JSON.stringify(commits_msg), (err) => {
 				if (err) console.log(err);
 			});
 		}).catch(error => {
@@ -65,44 +57,44 @@ bot.on('ready', () => {
 	}, 30000);
 });
 
-bot.on('message', async message => {
-	if (!message.content.startsWith(prefix) || message.author.bot) return
+bot.on('message', message => {
+	if (!message.content.startsWith(bot.prefix) || message.author.bot) return;
 
-	const args = await message.content.slice(prefix.length).trim().split(/ +/);
-	const command = await args.shift().toLowerCase();
+	const args = message.content.slice(bot.prefix.length).trim().split(/ +/);
+	const command = args.shift().toLowerCase();
 
 	if (!bot.commands.has(command)) return
 	try {
-		await bot.commands.get(command).execute(message, args);
+		bot.commands.get(command).execute(message, args);
 	} catch (error) {
-		await message.reply('Произошла ошибка при обработке команды!');
+		message.reply('Произошла ошибка при обработке команды!');
 		console.error(error);
 	}
 });
 
 bot.on('guildMemberAdd', member => {  
-	const channel = member.guild.channels.cache.get(novices_channel_id);
+	const channel = member.guild.channels.cache.get(config.novices_channel_id);
 	if (!channel) return
 
-	const phrase = phrases_join[Math.floor(Math.random() * phrases_join.length)];
+	const phrase = config.phrases_join[Math.floor(Math.random() * config.phrases_join.length)];
 	const embed = new Discord.MessageEmbed()
 		.setTitle('<:fadewow:559185624209293324> Присоединение на сервер')
 		.setDescription(`${member} ${phrase}`)  
-		.setColor(0x32f032)
+		.setColor('#32F032')
 		.setTimestamp();
 
 	channel.send({embed});
 });
 
 bot.on('guildMemberAdd', member => {  
-	const channel = member.guild.channels.cache.get(members_channel_id);
+	const channel = member.guild.channels.cache.get(config.members_channel_id);
 	if (!channel) return
 
 	channel.setName(`Участники: ${member.guild.memberCount}`);
 });
 
 bot.on('guildMemberRemove', member => {  
-	const channel = member.guild.channels.cache.get(members_channel_id);
+	const channel = member.guild.channels.cache.get(config.members_channel_id);
 	if (!channel) return
 
 	channel.setName(`Участники: ${member.guild.memberCount}`);
@@ -122,9 +114,9 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
 	const message = reaction.message;
 
-	let { notifyMessageID, reactions } = await require('./notify.json');
-	if (notifyMessageID === "") return
-	if (notifyMessageID !== message.id) return
+	let { notifyMessageID, reactions } = require('./notify.json');
+	if (notifyMessageID === '') return;
+	if (notifyMessageID !== message.id) return;
 	
 	let temp_reactions = []
 	for (let i = 0; i < reactions.length; i++) {
@@ -134,18 +126,19 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
 	if (temp_reactions.includes(reaction.emoji.id) || temp_reactions.includes(reaction.emoji.name)) {
 		if (!message.guild) return
-		let userToRole = await message.guild.members.cache.find(member => member.id === user.id);
+		let userToRole = message.guild.members.cache.find(member => member.id === user.id);
 
 		let notify_role;
 		for (let i = 0; i < reactions.length; i++) {
 			const el = reactions[i];
 			if (el.emoji === reaction.emoji.name || el.emoji === reaction.emoji.id) {
-				notify_role = await message.guild.roles.cache.find(role => role.name === el.role_name);
+				notify_role = message.guild.roles.cache.find(role => role.name === el.role_name);
 				break;
 			}
 		}
 
-		if (!notify_role) return
+		if (!notify_role) return;
+		
 		try {
 			if (userToRole.roles.cache.some(role => role.name === notify_role.name)) {
 				await userToRole.roles.remove(notify_role);
@@ -162,4 +155,4 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 	}
 });
 
-bot.login(token);
+bot.login(config.token);
