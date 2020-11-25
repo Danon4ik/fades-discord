@@ -48,12 +48,10 @@ bot.on('ready', () => {
 				commits_msg.sbox_commits.push(commit.id);
 			}
 
-			fs.writeFile('./commits_msg.json', JSON.stringify(commits_msg), (err) => {
+			fs.writeFile('./commits_msg.json', JSON.stringify(commits_msg), err => {
 				if (err) console.log(err);
 			});
-		}).catch(error => {
-			console.error(error);
-		});
+		}).catch(console.error);
 	}, 30000);
 });
 
@@ -66,9 +64,9 @@ bot.on('message', message => {
 	if (!bot.commands.has(command)) return
 	try {
 		bot.commands.get(command).execute(message, args);
-	} catch (error) {
+	} catch (err) {
 		message.reply('Произошла ошибка при обработке команды!');
-		console.error(error);
+		console.error(err);
 	}
 });
 
@@ -106,8 +104,8 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 	if (reaction.partial) {
 		try {
 			await reaction.fetch();
-		} catch (error) {
-			console.error('Что-то пошло не так при получении сообщения', error);
+		} catch (err) {
+			console.error('Что-то пошло не так при получении сообщения', err);
 			return;
 		}
 	}
@@ -147,8 +145,8 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 				await userToRole.roles.add(notify_role);
 				await userToRole.send(`:white_check_mark: Вы подписались на ${notify_role.name}`);
 			}
-		} catch (error) {
-			console.error('Что-то пошло не так при выдачи роли', error);
+		} catch (err) {
+			console.error('Что-то пошло не так при выдачи роли', err);
 		}
 
 		await reaction.users.remove(user.id);
