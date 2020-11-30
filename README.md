@@ -1,5 +1,5 @@
 # Fades Discord Bot
-Простой бот, созданный при помощи DiscordJS.
+Простой бот, написанный при помощи DiscordJS.
 Автоматически проверяет [коммиты S&box](https://commits.facepunch.com/r/sbox) и отправляет на канал.
 
 # Команды:
