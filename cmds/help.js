@@ -17,6 +17,6 @@ module.exports = {
       .setColor('#85107F')
       .setDescription(description);
 
-    return message.channel.send(embed).catch(console.error);
+    message.channel.send(embed).catch(console.error);
   }
 };
