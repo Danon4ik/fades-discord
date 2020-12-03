@@ -2,18 +2,18 @@ const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-	name: 'notify',
-	description: 'Команда для выдачи ролей для уведомлений.',
-	execute(message) {
-    const member = message.guild.members.cache.get(message.author.id);
-    if (!member.hasPermission(['ADMINISTRATOR'])) {
+  name: 'notify',
+  description: 'Команда для выдачи ролей для уведомлений.',
+  execute(message) {
+    const author = message.guild.members.cache.get(message.author.id);
+    if (!author.hasPermission(['ADMINISTRATOR'])) {
       message.reply('У вас нет прав на использование этой команды.')
       return;
     }
 
     message.delete();
 
-    let notify = require('../notify.json');
+    let notify = require('../../notify.json');
     let description = '';
 
     for (let i = 0; i < notify.reactions.length; i++) {
@@ -26,7 +26,7 @@ module.exports = {
       .setDescription(description)
       .setColor('#A1A1A1');
 
-    message.channel.send({embed})
+    message.channel.send(embed)
       .then(m => {
         notify.notifyMessageID = `${m.id}`;
         
@@ -40,5 +40,5 @@ module.exports = {
         }
       })
       .catch(console.error);
-	},
+  },
 }
