@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 
 module.exports = {
   name: 'notify',
-  description: 'Админ | Команда для выдачи ролей для уведомлений.',
+  description: 'Команда для выдачи ролей для уведомлений. Только для админов.',
   category: 'Выдача ролей',
   example: 'Команда без аргументов.',
   execute(message) {

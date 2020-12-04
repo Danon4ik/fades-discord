@@ -2,7 +2,7 @@ const { addXP } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'addxp',
-  description: 'Админ | Выдача опыта.',
+  description: 'Выдача опыта. Только для админов.',
   category: 'Система уровней',
   example: 'addxp @user 10 - дать @user 10 опыта\naddxp @user -10 - забрать у @user 10 опыта',
   execute(message, args) {

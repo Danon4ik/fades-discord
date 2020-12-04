@@ -2,7 +2,7 @@ const { initUsers } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'initusers',
-  description: 'Админ | Добавление всех участников на сервере в базу данных.',
+  description: 'Добавление всех участников на сервере в базу данных. Только для админов.',
   category: 'Разное',
   example: 'Команда без аргументов.',
   execute(message) {

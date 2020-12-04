@@ -2,7 +2,7 @@ const { addLevel } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'addlevel',
-  description: 'Админ | Выдача уровня.',
+  description: 'Выдача уровня. Только для админов.',
   category: 'Система уровней',
   example: 'addlevel @user 10 - дать @user 10 уровней\naddlevel @user -10 - забрать у @user 10 уровней',
   execute(message, args) {
