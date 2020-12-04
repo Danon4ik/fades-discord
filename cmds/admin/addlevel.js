@@ -2,12 +2,20 @@ const { addLevel } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'addlevel',
-  description: 'Выдача уровня.',
+  description: 'Админ | Выдача уровня.',
+  category: 'Система уровней',
+  example: 'addlevel @user 10 - дать @user 10 уровней\naddlevel @user -10 - забрать у @user 10 уровней',
   execute(message, args) {
-    const author = message.author;
-    const mention = message.mentions.users.first();
+    const members = message.guild.members;
+    const author = members.cache.get(message.author.id);
 
-    const user = mention ? mention : author;
+    if (!author.hasPermission(['ADMINISTRATOR'])) {
+      message.reply('У вас нет прав на использование этой команды.')
+      return;
+    }
+
+    const mention = message.mentions.users.first();
+    const user = mention ? mention : message.author;
     const arg = Number(args[1]) || false;
 
     if (!mention || args[0] === mention) {

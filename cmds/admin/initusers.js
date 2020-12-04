@@ -2,7 +2,9 @@ const { initUsers } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'initusers',
-  description: 'Добавление всех участников на сервере в базу данных.',
+  description: 'Админ | Добавление всех участников на сервере в базу данных.',
+  category: 'Разное',
+  example: 'Команда без аргументов.',
   execute(message) {
     const members = message.guild.members;
     const author = members.cache.get(message.author.id);

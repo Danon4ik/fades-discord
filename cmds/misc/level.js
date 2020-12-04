@@ -4,6 +4,8 @@ const { getUserLevel } = require('../../utils/mysql_queries');
 module.exports = {
   name: 'level',
   description: 'Отображает информацию об уровне.',
+  category: 'Разное',
+  example: 'Команда без аргументов.',
   execute(message) {
     const author = message.author;
     const mention = message.mentions.users.first();

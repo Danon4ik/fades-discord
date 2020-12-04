@@ -3,6 +3,8 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
   name: 'help',
   description: 'Отображает все команды с их описаниями.',
+  category: 'Разное',
+  example: 'help - отображает все команды\nhelp `наименование команды` - отображает пример использования команды',
   execute(message) {
     const commands = message.client.commands.array();
 

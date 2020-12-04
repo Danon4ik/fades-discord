@@ -2,12 +2,20 @@ const { addXP } = require('../../utils/mysql_queries');
 
 module.exports = {
   name: 'addxp',
-  description: 'Выдача опыта.',
+  description: 'Админ | Выдача опыта.',
+  category: 'Система уровней',
+  example: 'addxp @user 10 - дать @user 10 опыта\naddxp @user -10 - забрать у @user 10 опыта',
   execute(message, args) {
-    const author = message.author;
-    const mention = message.mentions.users.first();
+    const members = message.guild.members;
+    const author = members.cache.get(message.author.id);
 
-    const user = mention ? mention : author;
+    if (!author.hasPermission(['ADMINISTRATOR'])) {
+      message.reply('У вас нет прав на использование этой команды.')
+      return;
+    }
+
+    const mention = message.mentions.users.first();
+    const user = mention ? mention : message.author;
     const arg = Number(args[1]) || false;
 
     if (!mention || args[0] === mention) {
