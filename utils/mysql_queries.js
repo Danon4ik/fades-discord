@@ -1,5 +1,4 @@
 const { mysql_options, lvl_base_xp, lvl_xp_step } = require('../config.json');
-const { Client } = require('discord.js');
 const mysql = require('mysql');
 
 const conn = mysql.createConnection(mysql_options);
