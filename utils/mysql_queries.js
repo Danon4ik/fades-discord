@@ -1,11 +1,8 @@
 const { mysql_options, lvl_base_xp, lvl_xp_step } = require('../config.json');
 const mysql = require('mysql');
 
-var pool;
-try {
-  pool = mysql.createPool(mysql_options);
-  console.log('Успешное создание пула соединений MySQL!');
-} catch (err) { throw err; }
+const pool = mysql.createPool(mysql_options);
+if (pool) console.log('Успешное создание пула соединений MySQL!');
 
 const createTables = `
   CREATE TABLE IF NOT EXISTS \`level_system\` (
