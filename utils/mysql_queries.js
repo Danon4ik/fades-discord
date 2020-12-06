@@ -1,11 +1,11 @@
 const { mysql_options, lvl_base_xp, lvl_xp_step } = require('../config.json');
 const mysql = require('mysql');
 
-const conn = mysql.createConnection(mysql_options);
-conn.connect((err) => {
-  if (err) throw err;
-  console.log('Успешное подключение к базе данных MySQL!');
-})
+var pool;
+try {
+  pool = mysql.createPool(mysql_options);
+  console.log('Успешное создание пула соединений MySQL!');
+} catch (err) { throw err; }
 
 const createTables = `
   CREATE TABLE IF NOT EXISTS \`level_system\` (
@@ -18,7 +18,7 @@ const createTables = `
 `;
 
 function Init() {
-  conn.query(createTables, err => {
+  pool.query(createTables, err => {
     if (err) throw err;
     console.log('Таблицы в базе данных были успешно созданы!');
   });
@@ -31,7 +31,7 @@ function initUser(discord_id) {
     ON DUPLICATE KEY UPDATE discord_id = discord_id;
   `;
 
-  conn.query(query, err => {
+  pool.query(query, err => {
     if (err) throw err;
     console.log(`Участник '${discord_id}' был добавлен в базу данных!`);
   });
@@ -46,13 +46,13 @@ function initUsers(discord_ids) {
     query = query.concat([`(${id}, ${lvl_base_xp})${comma}`]);
   }
 
-  conn.query(query, err => {
+  pool.query(query, err => {
     if (err) throw err;
   });
 }
 
 function addLevel(discord_id, add) {
-  conn.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
+  pool.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
     if (err) throw err;
 
     if (rows.length === 0) {
@@ -70,7 +70,7 @@ function addLevel(discord_id, add) {
         WHERE discord_id = ${discord_id};
       `;
 
-      conn.query(query, err => {
+      pool.query(query, err => {
         if (err) throw err;
       });
     }
@@ -78,7 +78,7 @@ function addLevel(discord_id, add) {
 }
 
 function addXP(discord_id, add, callback) {
-  conn.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
+  pool.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
     if (err) throw err;
 
     if (rows.length === 0) {
@@ -104,7 +104,7 @@ function addXP(discord_id, add, callback) {
         WHERE discord_id = ${discord_id};
       `;
 
-      conn.query(query, err => {
+      pool.query(query, err => {
         if (err) throw err;
       });
     }
@@ -114,7 +114,7 @@ function addXP(discord_id, add, callback) {
 function getUserLevel(discord_id, callback) {
   let data = { discord_id: discord_id, lvl: 1, max_xp: lvl_base_xp, user_xp: 0 };
 
-  conn.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
+  pool.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
     if (err) throw err;
 
     if (rows.length === 0) {
