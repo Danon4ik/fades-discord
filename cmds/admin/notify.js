@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
+const { notify_roles } = require('../../config.json');
 
 module.exports = {
   name: 'notify',
@@ -15,11 +16,9 @@ module.exports = {
 
     message.delete();
 
-    let notify = require('../../notify.json');
     let description = '';
-
-    for (let i = 0; i < notify.reactions.length; i++) {
-      const el = notify.reactions[i];
+    for (let i = 0; i < notify_roles.length; i++) {
+      const el = notify_roles[i];
       description = description.concat([el.text + '\n']);
     }
 
@@ -30,14 +29,13 @@ module.exports = {
 
     message.channel.send(embed)
       .then(m => {
-        notify.notifyMessageID = `${m.id}`;
-        
-        fs.writeFile('./notify.json', JSON.stringify(notify), err => {
+        let notifyMessageID = `${m.id}`;
+        fs.writeFile('./notify.json', JSON.stringify(notifyMessageID), err => {
           if (err) console.error(err);
         });
         
-        for (let i = 0; i < notify.reactions.length; i++) {
-          const el = notify.reactions[i];
+        for (let i = 0; i < notify_roles.length; i++) {
+          const el = notify_roles[i];
           m.react(el.emoji).catch(console.error);
         }
       })

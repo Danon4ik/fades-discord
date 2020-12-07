@@ -160,13 +160,13 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
   const message = reaction.message;
 
-  let { notifyMessageID, reactions } = require('./notify.json');
+  let notifyMessageID = require('./notify.json');
   if (notifyMessageID === '') return;
   if (notifyMessageID !== message.id) return;
   
   let temp_reactions = []
-  for (let i = 0; i < reactions.length; i++) {
-    const el = reactions[i];
+  for (let i = 0; i < config.notify_roles.length; i++) {
+    const el = config.notify_roles[i];
     temp_reactions.push(el.emoji);
   }
 
@@ -175,8 +175,8 @@ bot.on('messageReactionAdd', async (reaction, user) => {
     let userToRole = message.guild.members.cache.find(member => member.id === user.id);
 
     let notify_role;
-    for (let i = 0; i < reactions.length; i++) {
-      const el = reactions[i];
+    for (let i = 0; i < config.notify_roles.length; i++) {
+      const el = config.notify_roles[i];
       if (el.emoji === reaction.emoji.name || el.emoji === reaction.emoji.id) {
         notify_role = message.guild.roles.cache.find(role => role.name === el.role_name);
         break;
