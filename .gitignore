@@ -1,2 +1,5 @@
 node_modules
-*.json
+
+package-lock.json
+commits_msg.json
+.env
