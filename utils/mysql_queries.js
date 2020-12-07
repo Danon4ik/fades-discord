@@ -1,7 +1,15 @@
-const { mysql_options, lvl_base_xp, lvl_xp_step } = require('../config.json');
+const { lvl_base_xp, lvl_xp_step } = require('../config.json');
 const mysql = require('mysql');
 
-const pool = mysql.createPool(mysql_options);
+const pool = mysql.createPool({
+  connectionLimit: 10,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME 
+});
+
 if (pool) console.log('Успешное создание пула соединений MySQL!');
 
 const createTables = `
