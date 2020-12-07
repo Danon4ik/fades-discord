@@ -1,18 +1,8 @@
 {
   "prefix": "!",
-  "token": "your-bot-token",
 
   "lvl_base_xp": 8,
   "lvl_xp_step": 16,
-
-  "mysql_options": {
-    "connectionLimit": 10,
-    "host": "localhost",
-    "port": 3306,
-    "user": "",
-    "password": "",
-    "database": ""
-  },
   
   "members_channel_id": "",
   "novices_channel_id": "",
