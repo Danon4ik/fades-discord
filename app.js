@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const config = require('./config.json');
 const query = require('./utils/mysql_queries');
 const { randomInt } = require('./utils/functions');
@@ -199,4 +201,4 @@ bot.on('messageReactionAdd', async (reaction, user) => {
   }
 });
 
-bot.login(config.token);
+bot.login(process.env.BOT_TOKEN);
