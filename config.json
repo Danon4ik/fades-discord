@@ -3,6 +3,9 @@
 
   "lvl_base_xp": 8,
   "lvl_xp_step": 16,
+
+  "commits_enabled": true,
+  "commits_delay": 30,
   
   "members_channel_id": "",
   "novices_channel_id": "",
