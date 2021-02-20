@@ -30,7 +30,7 @@ function Init() {
 }
 
 function initUser(discord_id) {
-  let query = `
+  const query = `
     INSERT INTO level_system (discord_id, max_xp)
     VALUES(${discord_id}, ${lvl_base_xp})
     ON DUPLICATE KEY UPDATE discord_id = discord_id
@@ -63,11 +63,11 @@ function addLevel(discord_id, add) {
     if (rows.length === 0) {
       initUser(discord_id)
     } else {
-      let add_lvl = rows[0].lvl + add
-      let lvl = add_lvl > 1 ? add_lvl : 1
-      let max_xp = lvl_base_xp + lvl_xp_step * (lvl - 1)
+      const add_lvl = rows[0].lvl + add
+      const lvl = add_lvl > 1 ? add_lvl : 1
+      const max_xp = lvl_base_xp + lvl_xp_step * (lvl - 1)
 
-      let query = `
+      const query = `
         UPDATE level_system
         SET lvl = ${lvl},
             max_xp = ${max_xp},
@@ -89,7 +89,7 @@ function addXP(discord_id, add, callback) {
     if (rows.length === 0) {
       initUser(discord_id)
     } else {
-      let add_xp = rows[0].user_xp + add
+      const add_xp = rows[0].user_xp + add
       let user_xp = add_xp > 0 ? add_xp : 0
       let lvl = rows[0].lvl
       let max_xp = rows[0].max_xp
@@ -101,7 +101,7 @@ function addXP(discord_id, add, callback) {
         callback(lvl, max_xp, user_xp)
       }
 
-      let query = `
+      const query = `
         UPDATE level_system
         SET user_xp = ${user_xp},
             lvl = ${lvl},
@@ -117,7 +117,7 @@ function addXP(discord_id, add, callback) {
 }
 
 function getUserLevel(discord_id, callback) {
-  let data = { discord_id: discord_id, lvl: 1, max_xp: lvl_base_xp, user_xp: 0 }
+  const data = { discord_id: discord_id, lvl: 1, max_xp: lvl_base_xp, user_xp: 0 }
 
   pool.query(`SELECT * FROM level_system WHERE discord_id = ${discord_id}`, (err, rows) => {
     if (err) throw err
