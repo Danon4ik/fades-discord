@@ -29,7 +29,7 @@ module.exports = {
 
     message.channel.send(embed)
       .then(m => {
-        let notifyMessageID = `${m.id}`
+        const notifyMessageID = `${m.id}`
         fs.writeFile('./notify.json', JSON.stringify(notifyMessageID), err => {
           if (err) console.error(err)
         })

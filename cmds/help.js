@@ -10,7 +10,7 @@ module.exports = {
     const arg = args[0] || false
 
     if (!arg) {
-      let fields = {}
+      const fields = {}
       const embed = new MessageEmbed()
         .setTitle('Список всех команд')
         .setColor('#85107F')

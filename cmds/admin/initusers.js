@@ -14,7 +14,7 @@ module.exports = {
       return
     }
 
-    let membersID = []
+    const membersID = []
     members.cache.map(member => {
       if (member.user.bot) return
       membersID.push(member.id)

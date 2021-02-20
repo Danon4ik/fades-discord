@@ -5,7 +5,7 @@ module.exports = {
   example: 'Команда без аргументов.',
   execute(message) {
     message.channel.send('Проверяем задержку...').then(m => {
-      var ping = m.createdTimestamp - message.createdTimestamp
+      const ping = m.createdTimestamp - message.createdTimestamp
       m.edit(`Задержка между сообщениями - ${ping} мс.`)
     }).catch(console.error)
   },

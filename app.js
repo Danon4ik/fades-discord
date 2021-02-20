@@ -50,7 +50,7 @@ bot.on('ready', () => {
   
   if (config.commits_enabled) {
     setInterval(() => {
-      let commits_msg = require('./commits_msg.json')
+      const commits_msg = require('./commits_msg.json')
 
       fetch('https://commits.facepunch.com/r/sbox?format=json').then(res => {
         if (!res.ok) throw Error(res.statusText)
@@ -77,7 +77,7 @@ bot.on('ready', () => {
           commits_channel.send({embed})
         }
 
-        let temp_sbox_commits = []
+        const temp_sbox_commits = []
         for (let i = 0; i < commits_data.length; i++) {
           const commit = commits_data[i]
           temp_sbox_commits[i] = commit.id
@@ -112,7 +112,7 @@ bot.on('message', msg => {
 bot.on('message', msg => {
   if (msg.content.startsWith(bot.prefix) || msg.author.bot) return
 
-  let random = randomInt(1, 3)
+  const random = randomInt(1, 3)
   query.addXP(msg.author.id, random, (lvl, max_xp, user_xp) => {
     const desc = `Новый уровень: ${lvl}\n`
       + `Ваш опыт: ${user_xp} / ${max_xp} xp\n`
@@ -170,11 +170,11 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
   const message = reaction.message
 
-  let notifyMessageID = require('./notify.json')
+  const notifyMessageID = require('./notify.json')
   if (notifyMessageID === '') return
   if (notifyMessageID !== message.id) return
   
-  let temp_reactions = []
+  const temp_reactions = []
   for (let i = 0; i < config.notify_roles.length; i++) {
     const el = config.notify_roles[i]
     temp_reactions.push(el.emoji)
@@ -182,7 +182,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
   if (temp_reactions.includes(reaction.emoji.id) || temp_reactions.includes(reaction.emoji.name)) {
     if (!message.guild) return
-    let userToRole = message.guild.members.cache.find(member => member.id === user.id)
+    const userToRole = message.guild.members.cache.find(member => member.id === user.id)
 
     let notify_role
     for (let i = 0; i < config.notify_roles.length; i++) {
