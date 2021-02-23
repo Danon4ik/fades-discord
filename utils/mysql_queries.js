@@ -10,7 +10,13 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME 
 })
 
-if (pool) console.log('Успешное создание пула соединений MySQL!')
+pool.on('connection', conn => {
+  console.log('Успешное создание пула соединений MySQL!')
+})
+
+pool.on('error', err => {
+  console.error(err)
+})
 
 const createTables = `
   CREATE TABLE IF NOT EXISTS \`level_system\` (
