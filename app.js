@@ -1,8 +1,5 @@
 require('dotenv').config()
-
 const config = require('./config.json')
-const query = require('./utils/mysql_queries')
-const { randomInt } = require('./utils/functions')
 
 const fs = require('fs')
 const { join } = require('path')
@@ -15,9 +12,9 @@ bot.commands = new Collection()
 bot.prefix = config.prefix
 
 const cmds = fs.readdirSync('./cmds')
-const cmdFiles = cmds.filter(item => item.endsWith('.js'))
-const cmdFolders = cmds.filter(item => {
-  const path = join(__dirname, `cmds/${item}`)
+const cmdFiles = cmds.filter(file => file.endsWith('.js'))
+const cmdFolders = cmds.filter(folder => {
+  const path = join(__dirname, `cmds/${folder}`)
   return fs.lstatSync(path).isDirectory()
 })
 
@@ -46,8 +43,6 @@ bot.on('ready', () => {
   bot.user.setPresence({ activity: { name: 'fades.pw', type: 'WATCHING' }, status: 'online' })
   console.log(`Бот запущен как ${bot.user.tag}`)
 
-  query.Init()
-  
   if (config.commits_enabled) {
     setInterval(() => {
       const commits_msg = require('./commits_msg.json')
@@ -109,43 +104,10 @@ bot.on('message', msg => {
   }
 })
 
-bot.on('message', msg => {
-  if (msg.content.startsWith(bot.prefix) || msg.author.bot) return
-
-  const random = randomInt(1, 3)
-  query.addXP(msg.author.id, random, (lvl, max_xp, user_xp) => {
-    const desc = `Новый уровень: ${lvl}\n`
-      + `Ваш опыт: ${user_xp} / ${max_xp} xp\n`
-      + `До следующего уровня: ${max_xp - user_xp} xp`
-
-    const embed = new MessageEmbed()
-      .setTitle(':tada: Вы поднялись на новый уровень!')
-      .setColor('#85107F')
-      .setDescription(desc)
-
-    msg.author.send(embed).catch(console.error)
-  })
-})
-
-bot.on('guildMemberAdd', member => {  
-  const channel = bot.channels.cache.get(config.novices_channel_id)
-  if (!channel) return
-
-  const phrase = config.phrases_join[Math.floor(Math.random() * config.phrases_join.length)]
-  const embed = new MessageEmbed()
-    .setTitle('<:fadewow:559185624209293324> Присоединение на сервер')
-    .setDescription(`${member} ${phrase}`)  
-    .setColor('#32F032')
-    .setTimestamp()
-
-  channel.send({embed})
-})
-
 bot.on('guildMemberAdd', member => {
   const channel = bot.channels.cache.get(config.members_channel_id)
   if (!channel) return
-  
-  query.initUser(member.id)
+
   channel.setName(`Участники: ${member.guild.memberCount}`)
 })
 
