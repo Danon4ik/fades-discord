@@ -6,7 +6,6 @@ module.exports = {
   name: 'notify',
   description: 'Команда для выдачи ролей для уведомлений. Только для админов.',
   category: 'Выдача ролей',
-  example: 'Команда без аргументов.',
   execute(message) {
     const author = message.guild.members.cache.get(message.author.id)
     if (!author.hasPermission(['ADMINISTRATOR'])) {
