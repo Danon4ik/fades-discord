@@ -60,4 +60,4 @@ module.exports = {
 
     message.channel.send(embed).catch(console.error)
   }
-};
+}

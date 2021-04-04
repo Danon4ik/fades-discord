@@ -18,7 +18,7 @@ module.exports = {
     let description = ''
     for (let i = 0; i < notify_roles.length; i++) {
       const el = notify_roles[i]
-      description = description.concat([el.text + '\n'])
+      description += (el.text + '\n')
     }
 
     const embed = new MessageEmbed()

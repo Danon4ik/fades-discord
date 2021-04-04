@@ -8,4 +8,4 @@ module.exports = {
       m.edit(`Задержка между сообщениями - ${ping} мс.`)
     }).catch(console.error)
   },
-};
+}
