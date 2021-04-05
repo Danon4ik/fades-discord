@@ -1,6 +1,6 @@
 const fs = require('fs')
 const { MessageEmbed } = require('discord.js')
-const { notify_roles } = require('../../config.json')
+const { notify_title_emoji, notify_roles } = require('../../config.json')
 
 module.exports = {
   name: 'notify',
@@ -22,7 +22,7 @@ module.exports = {
     }
 
     const embed = new MessageEmbed()
-      .setTitle('<:fadethonk:777211533310427137> Выдача ролей')
+      .setTitle(`${notify_title_emoji ? notify_title_emoji + ' ' : ''}` + this.category)
       .setDescription(description)
       .setColor('#A1A1A1')
 
