@@ -1,0 +1,24 @@
+{
+  "token": "",
+  "prefix": "!",
+  "commitsEnabled": true,
+  "commitsDelay": 30,
+  "membersChannelId": "",
+  "sboxCommitsChannelId": "",
+  "notify": {
+    "titleEmoji": "",
+    "roles": [
+      {
+        "emoji": "📰",
+        "role": "general-news",
+        "text": "📰 - Получить роль для обычных новостей."
+      },
+      {
+        "emoji": "123456789012345678",
+        "role": "sbox-news",
+        "text": "<:emodji:123456789012345678> - Получить роль для новостей, связанных с S&box."
+      }
+    ],
+    "messageId": ""
+  }
+}

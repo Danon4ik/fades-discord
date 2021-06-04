@@ -1,176 +1,173 @@
-require('dotenv').config()
-const config = require('./config.json')
+const fs = require("fs");
+const { join } = require("path");
+const fetch = require("node-fetch");
+const { Client, Collection, MessageEmbed } = require("discord.js");
 
-const fs = require('fs')
-const { join } = require('path')
-const fetch = require('node-fetch')
-const { Client, Collection, MessageEmbed } = require('discord.js')
+const consola = require("consola");
 
-const bot = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
+const bot = new Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"] });
 
-bot.commands = new Collection()
-bot.prefix = config.prefix
+bot.config = require("./config.json");
+bot.commands = new Collection();
 
-const cmds = fs.readdirSync('./cmds')
-const cmdFiles = cmds.filter(file => file.endsWith('.js'))
+const cmds = fs.readdirSync("./cmds");
+const cmdFiles = cmds.filter(file => file.endsWith(".js"));
 const cmdFolders = cmds.filter(folder => {
-  const path = join(__dirname, `cmds/${folder}`)
-  return fs.lstatSync(path).isDirectory()
-})
+  const path = join(__dirname, `cmds/${folder}`);
+  return fs.lstatSync(path).isDirectory();
+});
 
 for (const file of cmdFiles) {
-  const path = join(__dirname, `cmds/${file}`)
-  const cmd = require(path)
+  const path = join(__dirname, `cmds/${file}`);
+  const cmd = require(path);
 
-  bot.commands.set(cmd.name, cmd)
-  console.log(`Команда '${cmd.name}' загружена успешно!`)
+  bot.commands.set(cmd.name, cmd);
+  consola.success(`Команда '${cmd.name}' загружена успешно!`);
 }
 
 for (const folder of cmdFolders) {
-  const path = join(__dirname, `cmds/${folder}`)
-  const cmdFolder = fs.readdirSync(path).filter(file => file.endsWith('.js'))
+  const path = join(__dirname, `cmds/${folder}`);
+  const cmdFolder = fs.readdirSync(path).filter(file => file.endsWith(".js"));
 
   for (const file of cmdFolder) {
-    const cmdPath = join(path, file)
-    const cmd = require(cmdPath)
+    const cmdPath = join(path, file);
+    const cmd = require(cmdPath);
 
-    bot.commands.set(cmd.name, cmd)
-    console.log(`Команда '${folder}/${cmd.name}' загружена успешно!`)
+    bot.commands.set(cmd.name, cmd);
+    consola.success(`Команда '${folder}/${cmd.name}' загружена успешно!`);
   }
 }
 
-bot.on('ready', () => {
-  bot.user.setPresence({ activity: { name: 'fades.pw', type: 'WATCHING' }, status: 'online' })
-  console.log(`Бот запущен как ${bot.user.tag}`)
+bot.on("ready", () => {
+  bot.user.setPresence({ activity: { name: "fades.pw", type: "WATCHING" }, status: "online" });
+  consola.ready({ message: `Бот запущен как ${bot.user.tag}`, badge: true });
 
-  if (config.commits_enabled) {
+  if (bot.config.commitsEnabled) {
     setInterval(() => {
-      const commits_msg = require('./commits_msg.json')
+      const commits = require("./commits.json");
 
-      fetch('https://commits.facepunch.com/r/sbox?format=json').then(res => {
-        if (!res.ok) throw Error(res.statusText)
-        return res
+      fetch("https://commits.facepunch.com/r/sbox?format=json").then(res => {
+        if (!res.ok) throw Error(res.statusText);
+        return res;
       }).then(res => {
-        return res.json()
+        return res.json();
       }).then(data => {
-        const commits_channel = bot.channels.cache.get(config.sbox_commits_channel_id)
-        if (!commits_channel) return
+        const commitsChannel = bot.channels.cache.get(bot.config.sboxCommitsChannelId);
+        if (!commitsChannel) return;
 
-        const commits_data = data.results
-        for (let i = commits_data.length - 1; i >= 0; i--) {
-          const commit = commits_data[i]
-          if (commits_msg.sbox_commits.includes(commit.id)) continue
+        const commitsData = data.results;
+        for (let i = commitsData.length - 1; i >= 0; i--) {
+          const commit = commitsData[i];
+          if (commits.sbox.includes(commit.id)) continue;
 
           const embed = new MessageEmbed()
-            .setColor('#85107f')
+            .setColor("#85107f")
             .setTitle(`${commit.repo}/${commit.branch}#${commit.changeset}`)
             .setAuthor(`${commit.user.name}`, `${commit.user.avatar}`)
             .setURL(`https://commits.facepunch.com/${commit.id}`)
             .setDescription(`\`\`\`${commit.message}\`\`\``)
-            .setTimestamp()
+            .setTimestamp();
 
-          commits_channel.send({embed})
+          commitsChannel.send({embed});
         }
 
-        const temp_sbox_commits = []
-        for (let i = 0; i < commits_data.length; i++) {
-          const commit = commits_data[i]
-          temp_sbox_commits[i] = commit.id
+        const tempSboxCommits = [];
+        for (let i = 0; i < commitsData.length; i++) {
+          const commit = commitsData[i];
+          tempSboxCommits[i] = commit.id;
         }
 
-        if (temp_sbox_commits !== commits_msg.sbox_commits) {
-          commits_msg.sbox_commits = temp_sbox_commits
-          fs.writeFile('./commits_msg.json', JSON.stringify(commits_msg), err => {
-            if (err) console.log(err)
-          })
+        if (tempSboxCommits !== commits.sbox) {
+          commits.sbox = tempSboxCommits;
+          fs.writeFile("./commits.json", JSON.stringify(commits), err => {
+            if (err) console.error(err);
+          });
         }
-      }).catch(console.error)
-    }, config.commits_delay * 1000)
+      }).catch(console.error);
+    }, bot.config.commitsDelay * 1000);
   }
-})
+});
 
-bot.on('message', msg => {
-  if (!msg.content.startsWith(bot.prefix) || msg.author.bot) return
+bot.on("message", msg => {
+  if (!msg.content.startsWith(bot.config.prefix) || msg.author.bot) return;
 
-  const args = msg.content.slice(bot.prefix.length).trim().split(/ +/)
-  const command = args.shift().toLowerCase()
+  const args = msg.content.slice(bot.config.prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
 
-  if (!bot.commands.has(command)) return
+  if (!bot.commands.has(command)) return;
   try {
-    bot.commands.get(command).execute(msg, args)
+    bot.commands.get(command).execute(msg, args);
   } catch (err) {
-    msg.reply('Произошла ошибка при обработке команды!')
-    console.error(err)
+    msg.reply("Произошла ошибка при обработке команды!");
+    console.error(err).bind(console, "Ошибка при обработке команды");
   }
-})
+});
 
-bot.on('guildMemberAdd', member => {
-  const channel = bot.channels.cache.get(config.members_channel_id)
-  if (!channel) return
+bot.on("guildMemberAdd", member => {
+  const channel = bot.channels.cache.get(bot.config.membersChannelId);
+  if (!channel) return;
 
-  channel.setName(`Участники: ${member.guild.memberCount}`)
-})
+  channel.setName(`Участники: ${member.guild.memberCount}`);
+});
 
-bot.on('guildMemberRemove', member => {  
-  const channel = bot.channels.cache.get(config.members_channel_id)
-  if (!channel) return
+bot.on("guildMemberRemove", member => {
+  const channel = bot.channels.cache.get(bot.config.membersChannelId);
+  if (!channel) return;
 
-  channel.setName(`Участники: ${member.guild.memberCount}`)
-})
+  channel.setName(`Участники: ${member.guild.memberCount}`);
+});
 
-bot.on('messageReactionAdd', async (reaction, user) => {
-  if (user.bot) return
+bot.on("messageReactionAdd", async (reaction, user) => {
+  if (user.bot) return;
 
   if (reaction.partial) {
     try {
-      await reaction.fetch()
+      await reaction.fetch();
     } catch (err) {
-      console.error('Что-то пошло не так при получении сообщения', err)
-      return
+      console.error(err).bind(console, "Ошибка при получении сообщения:");
+      return;
     }
   }
 
-  const message = reaction.message
+  const message = reaction.message;
+  if (!message.guild) return;
 
-  const notifyMessageID = require('./notify.json')
-  if (notifyMessageID === '') return
-  if (notifyMessageID !== message.id) return
-  
-  const temp_reactions = []
-  for (let i = 0; i < config.notify_roles.length; i++) {
-    const el = config.notify_roles[i]
-    temp_reactions.push(el.emoji)
+  if (bot.config.notify.messageId !== message.id) return;
+
+  const reactions = [];
+  for (let i = 0; i < bot.config.notify.roles.length; i++) {
+    const item = bot.config.notify.roles[i];
+    reactions.push(item.emoji);
   }
 
-  if (temp_reactions.includes(reaction.emoji.id) || temp_reactions.includes(reaction.emoji.name)) {
-    if (!message.guild) return
-    const userToRole = message.guild.members.cache.find(member => member.id === user.id)
+  if (reactions.includes(reaction.emoji.id) || reactions.includes(reaction.emoji.name)) {
+    const userToRole = message.guild.members.cache.find(member => member.id === user.id);
 
-    let notify_role
-    for (let i = 0; i < config.notify_roles.length; i++) {
-      const el = config.notify_roles[i]
-      if (el.emoji === reaction.emoji.name || el.emoji === reaction.emoji.id) {
-        notify_role = message.guild.roles.cache.find(role => role.name === el.role_name)
-        break
+    let notifyRole;
+    for (let i = 0; i < bot.config.notify.roles.length; i++) {
+      const item = bot.config.notify.roles[i];
+      if (item.emoji === reaction.emoji.name || item.emoji === reaction.emoji.id) {
+        notifyRole = message.guild.roles.cache.find(role => role.name === item.role);
+        break;
       }
     }
 
-    if (!notify_role) return
-    
+    if (!notifyRole) return;
+
     try {
-      if (userToRole.roles.cache.some(role => role.name === notify_role.name)) {
-        await userToRole.roles.remove(notify_role)
-        await userToRole.send(`:x: Вы отписались от ${notify_role.name}`)
+      if (userToRole.roles.cache.some(role => role.name === notifyRole.name)) {
+        await userToRole.roles.remove(notifyRole);
+        await userToRole.send(`:x: Вы отписались от ${notifyRole.name}`);
       } else {
-        await userToRole.roles.add(notify_role)
-        await userToRole.send(`:white_check_mark: Вы подписались на ${notify_role.name}`)
+        await userToRole.roles.add(notifyRole);
+        await userToRole.send(`:white_check_mark: Вы подписались на ${notifyRole.name}`);
       }
     } catch (err) {
-      console.error('Что-то пошло не так при выдачи роли', err)
+      console.error(err).bind(console, "Ошибка при выдачи роли:");
     }
 
-    await reaction.users.remove(user.id)
+    await reaction.users.remove(user.id);
   }
-})
+});
 
-bot.login(process.env.BOT_TOKEN)
+bot.login(bot.config.token);

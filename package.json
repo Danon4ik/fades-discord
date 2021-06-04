@@ -1,18 +1,21 @@
 {
   "name": "fades-discord",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A simple bot for discord made using DiscordJS",
   "main": "app.js",
+  "repository": "github:danon4ik/fades-discord-bot",
   "author": "Danon",
-  "homepage": "https://github.com/danon4ik/fades-discord",
-  "repository": "github:danon4ik/fades-discord",
   "license": "MIT",
-  "dependencies": {
-    "discord.js": "^12.5.1",
-    "dotenv": "^8.2.0",
-    "node-fetch": "^2.6.1"
-  },
   "scripts": {
     "start": "node app.js"
+  },
+  "dependencies": {
+    "consola": "^2.15.3",
+    "discord.js": "^12.5.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.27.0"
   }
 }
