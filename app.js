@@ -1,11 +1,11 @@
 const fs = require("fs");
 const { join } = require("path");
 const fetch = require("node-fetch");
-const { Client, Collection, MessageEmbed } = require("discord.js");
+
+const { Client, Collection, WebhookClient } = require("discord.js");
+const bot = new Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"] });
 
 const consola = require("consola");
-
-const bot = new Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"] });
 
 bot.config = require("./config.json");
 bot.commands = new Collection();
@@ -42,7 +42,9 @@ bot.on("ready", () => {
   bot.user.setPresence({ activity: { name: "fades.pw", type: "WATCHING" }, status: "online" });
   consola.ready({ message: `Бот запущен как ${bot.user.tag}`, badge: true });
 
-  if (bot.config.commitsEnabled) {
+  if (bot.config.commits.enabled) {
+    const commitsWebhook = new WebhookClient(bot.config.commits.webhook.id, bot.config.commits.webhook.token);
+
     setInterval(() => {
       const commits = require("./commits.json");
 
@@ -52,39 +54,37 @@ bot.on("ready", () => {
       }).then(res => {
         return res.json();
       }).then(data => {
-        const commitsChannel = bot.channels.cache.get(bot.config.sboxCommitsChannelId);
-        if (!commitsChannel) return;
-
         const commitsData = data.results;
         for (let i = commitsData.length - 1; i >= 0; i--) {
           const commit = commitsData[i];
           if (commits.sbox.includes(commit.id)) continue;
 
-          const embed = new MessageEmbed()
-            .setColor("#85107f")
-            .setTitle(`${commit.repo}/${commit.branch}#${commit.changeset}`)
-            .setAuthor(`${commit.user.name}`, `${commit.user.avatar}`)
-            .setURL(`https://commits.facepunch.com/${commit.id}`)
-            .setDescription(`\`\`\`${commit.message}\`\`\``)
-            .setTimestamp();
+          let message = commit.message + "\n";
+          message += `- [${commit.user.name}](<https://commits.facepunch.com/${commit.user.name.replace(/\s+/g, "")}>) on `;
+          message += `[${commit.repo}](<https://commits.facepunch.com/r/${commit.repo}>)/`;
+          message += `[${commit.branch}](<https://commits.facepunch.com/r/${commit.repo}/${commit.branch}>)`;
+          message += ` ([#${commit.changeset}](<https://commits.facepunch.com/${commit.id}>))`;
 
-          commitsChannel.send({embed});
+          commitsWebhook.send(message, {
+            username: commit.user.name,
+            avatarURL: commit.user.avatar,
+          });
         }
 
-        const tempSboxCommits = [];
+        const tempCommits = [];
         for (let i = 0; i < commitsData.length; i++) {
           const commit = commitsData[i];
-          tempSboxCommits[i] = commit.id;
+          tempCommits[i] = commit.id;
         }
 
-        if (tempSboxCommits !== commits.sbox) {
-          commits.sbox = tempSboxCommits;
+        if (commits.sbox !== tempCommits) {
+          commits.sbox = tempCommits;
           fs.writeFile("./commits.json", JSON.stringify(commits), err => {
             if (err) console.error(err);
           });
         }
       }).catch(console.error);
-    }, bot.config.commitsDelay * 1000);
+    }, bot.config.commits.delay * 1000);
   }
 });
 

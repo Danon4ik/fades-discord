@@ -1,6 +1,6 @@
 {
   "name": "fades-discord",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "A simple bot for discord made using DiscordJS",
   "main": "app.js",
   "repository": "github:danon4ik/fades-discord-bot",
